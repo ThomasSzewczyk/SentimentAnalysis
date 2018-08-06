@@ -1,0 +1,147 @@
+/**
+ * @author Thomas Szewczyk
+ * @version 2017.25.11
+ * Word Class, represents a word object
+ * composed of the actual word, the score of the rating, 
+ * and the number of occurrences in the up-to-now read training set
+ * This is the data type which the BST will store
+ *
+ */
+public class Word implements Comparable<Word> {
+
+    /**
+     * data fields for the information we want to store
+     * The phrase : the WORD in String form
+     * The Score: the total score of the word
+     * The numOccur: The total number of occurrences of this word
+     */
+    private String phrase; //Phrase is a single Word, will never be an actual phrase
+    private int score;
+    private int numOccur;
+    
+    /**
+     * @param phrase the specific word we are examining
+     * @param score the score attributed to that specific word
+     * @param numOccur the number of occurrences in the read corpus
+     */
+    public Word(String phrase, int score, int numOccur) {
+        this.phrase = phrase;
+        this.score = score;
+        this.numOccur = numOccur;
+    }
+    
+    /**
+     * @param w1 the other word we want to compare
+     * @return int the difference between the two words alphabetically
+     * If the references are equal(reference check), return 0, otherwise
+     * return the result of comparing the phrase attribute
+     *  of both instances of the Word type. No reason to compare
+     *  other attributes of Word for storing in the Binary Search Tree.
+     *  Methods such as insert will use this compareTo method
+     *  to form a BST which is ordered alphabetically based on the 
+     *  values of the phrase parameter of each Word object.
+     *  Worst case: O(N)--comparing strings(the phrase variable) via the String.compareTo()
+     *  method, at the base level compares each character of the phrase variables -- O(n), 
+     *  n=# characters in the phrase variable
+     *  in the Word data type passed. Other variable comparisons(score and numOccur) can be done in O(1)
+     */
+    public int compareTo(Word w1) {
+        if(w1 == null) 
+        {
+            return -99999;
+        }
+        if(this == w1)
+        {
+            return 0;
+        }
+        return this.phrase.compareTo(w1.getPhrase());
+    }
+    
+    /**
+     * Boolean comparison of two word objects
+     * Will be useful in test cases
+     * All parameters of each word object are compared
+     * Tests to make sure that all variables of two word objects match
+     * @param w the word you want to compare
+     * @return boolean whether all variables are equal 
+     * Worst case: O(N)--As the length of the phrase variable (as part of w) increases, the String.equals()
+     * method must compare more string characters, causing time complexity to be proportional to the
+     * size of the phrase string variable in the Word object passed. Other variable comparisons(score and numOccur)
+     *  can be done in O(1)
+     */
+    public boolean equals(Word w) {
+        if(w == null) {
+            return false;
+        }
+        if(this == w) {
+            return true;
+        }
+        if(this.phrase.compareTo(w.getPhrase()) == 0)
+        {
+            if(this.score == w.getScore())
+            {
+                if(this.numOccur == w.getnumOccur()) 
+                {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        else
+        {
+            return false; 
+        }
+    }
+    
+    /**
+     * @return the phrase
+     * O(1)
+     */ 
+    public String getPhrase() {
+        return phrase;
+    }
+    
+    /**
+     * @param phrase the word to set
+     * O(1)
+     */
+    public void setPhrase(String phrase) {
+        this.phrase = phrase;
+    }
+
+    /**
+     * @return the total score
+     * O(1)
+     */
+    public int getScore() {
+        return score;
+    }
+
+    /**
+     * @param score the total score to set
+     * O(1)
+     */
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    /**
+     * @return the number of occurences
+     * O(1)
+     */
+    public int getnumOccur() {
+        return numOccur;
+    }
+
+    /**
+     * @param numOccur the number of occurrences to be set
+     * O(1)
+     */
+    public void setnumOccur(int numOccur) {
+        this.numOccur = numOccur;
+
+    }
+
+    
+}
