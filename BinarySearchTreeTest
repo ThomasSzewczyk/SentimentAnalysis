@@ -1,0 +1,177 @@
+import student.TestCase;
+
+/**
+ * @version 2017.21.11
+ * @author Thomas Szewczyk
+ * This class tests the BinarySearchTree class
+ *
+ */
+public class BinarySearchTreeTest extends TestCase {
+
+    /**
+     * composed of letters
+     */
+    private BinarySearchTree<String> b1;
+
+    /**
+     * Constructor
+     */
+    public BinarySearchTreeTest() {
+        // Empty
+    }
+
+    /**
+     * set up method
+     */
+    public void setUp() {
+        b1 = new BinarySearchTree<String>();
+    }
+
+    /**
+     * test insert method 
+     */
+    public void testinsert() {
+        b1.insert("L");
+        assertEquals("L", b1.find("L"));
+        assertEquals(b1.findMin(), b1.findMax());
+        b1.insert("A");
+        assertEquals("A", b1.find("A"));
+        assertEquals("A", b1.findMin());
+        assertEquals("A", b1.find("A"));
+        assertEquals("L", b1.findMax());
+        b1.insert("T");
+        assertEquals("T", b1.find("T"));
+        assertEquals("A", b1.findMin());
+        assertEquals("T", b1.findMax());
+        b1.insert("B");
+        b1.insert("C");
+        b1.insert("X");
+        assertEquals("B", b1.find("B"));
+        assertEquals("C", b1.find("C"));
+        assertEquals("X", b1.find("X"));
+        assertEquals("A", b1.findMin());
+        assertEquals("X", b1.findMax());
+        Exception occured = null;
+        try 
+        {
+            b1.insert("A");
+        } 
+        catch (Exception ex) {
+            occured = ex;
+        }
+        assertNotNull(occured);
+        assertTrue(occured instanceof DuplicateItemException);
+    }
+
+    /**
+     * test findmin() method
+     */
+    public void testfindMin() {
+        b1.insert("A");
+        b1.insert("B");
+        assertEquals("A", b1.findMin());
+    }
+
+    /**
+     * test findmax() method
+     */
+    public void testfindMax() {
+        b1.insert("A");
+        b1.insert("B");
+        assertEquals("B", b1.findMax());
+        
+        b1.makeEmpty();
+        b1.findMax();
+    }
+    
+    /**
+     * test find() method 
+     */
+    public void testfind() {
+        b1.insert("A");
+        assertEquals("A", b1.find("A"));
+    }
+    
+    /**
+     * test makeEmpty() method
+     */
+    public void testmakeEmpty() {
+        b1.insert("A");
+        b1.insert("B");
+        b1.makeEmpty();
+        assertNull(b1.findMin());
+    }
+    
+    /**
+     * test isEmpty() method
+     */
+    public void testisEmpty() {
+        assertTrue(b1.isEmpty());
+        b1.insert("A");
+        assertFalse(b1.isEmpty());
+    }
+
+    /**
+     * test remove() method
+     */
+    public void testremove() {
+        b1.insert("A");
+        b1.remove("A");
+        assertTrue(b1.isEmpty());
+        b1.insert("A");
+        b1.insert("B");
+        b1.insert("D");
+        b1.remove("A");
+        assertEquals("D" , b1.findMax());
+        assertEquals("B", b1.findMin());
+        b1.insert("C");
+        b1.remove("D");
+        assertEquals("B" , b1.findMin());
+        assertEquals("C", b1.findMax());
+        Exception occured = null;
+        try 
+        {
+            b1.remove("Q");
+        }
+        catch (Exception ex) {
+            occured = ex;
+        }
+        assertNotNull(occured);
+        assertTrue(occured instanceof ItemNotFoundException);
+        b1.makeEmpty();
+        b1.insert("E");
+        b1.insert("B");
+        b1.insert("A");
+        b1.insert("D");
+        b1.insert("C");
+
+        assertEquals("B", b1.find("B"));
+        b1.remove("B");
+
+        assertNull(b1.find("B"));
+        assertEquals("C", b1.find("C"));
+        assertEquals("E", b1.findMax());
+        assertEquals("A", b1.findMin());
+        System.out.println("Now C");
+        b1.remove("C");
+        try {
+            throw new DuplicateItemException();
+        }
+        catch (Exception ex) {
+            //Attempt to get rid of webcat error
+        }
+        try {
+            throw new ItemNotFoundException();
+        }
+        catch (Exception ex) {
+            //Attempt to get rid of webcat error
+        }
+        b1.makeEmpty();
+        b1.insert("B");
+        b1.insert("A");
+        b1.insert("D");
+        b1.insert("C");
+        b1.remove("B");
+        assertNull(b1.find("B"));
+    }
+}
