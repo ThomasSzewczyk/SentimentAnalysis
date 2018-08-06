@@ -1,0 +1,175 @@
+import student.TestCase;
+
+/**
+ * @author Thomas Szewczyk
+ * @version 2017.26.11
+ * Test class to test the functions of the Word class
+ */
+
+public class WordTest extends TestCase{
+
+    /**
+     * Two dynamic variables used for comparison
+     */
+    private Word test;
+    private Word test2;
+    
+    /**
+     * Constructor
+     */
+    public WordTest() 
+    {
+        //Empty
+    }
+    
+    /**
+     * Initializing test and test2 to copies of each other initially
+     */
+    public void setUp() {
+        test = new Word("The", 40, 10);
+        test2 = new Word("The", 40, 10);
+    }
+    
+    /**
+     * Testing the functions of the Word class
+     * compareTo method tested among all possibilities
+     * Getters and Setters of Word tested throughout
+     * Note: Do not need to check if values passed
+     * are of the type Word due to the generic restriction
+     * on the parameter types allowed
+     */
+    public void testcompareTo() {
+        assertEquals(0, test.compareTo(test2));
+        test2.setnumOccur(5);
+        //Ref Check
+        test2 = test;
+        assertEquals(0, test.compareTo(test2));
+        test2 = new Word("The", 40, 10);
+        assertEquals(test.getPhrase(), test2.getPhrase());
+        assertEquals(test.getScore(), test2.getScore(), .001);
+        assertEquals(test.getnumOccur(), test2.getnumOccur());
+        test2.setnumOccur(10);
+        assertEquals(10, test2.getnumOccur());
+        //The compareTo() method only compares the phrase variable among two objects
+        assertEquals(0, test.compareTo(test2));
+        test2.setScore(0);
+        assertEquals(0, test2.getScore());
+        //"The" is same as "The" 
+        assertEquals(0, test.compareTo(test2));
+        test2.setPhrase("Song");
+        assertEquals("Song", test2.getPhrase());
+        //Now the phrase has changed so compareTo() returns the alphabetical difference
+        assertEquals(1, test.compareTo(test2));
+        test2.setPhrase("Umoja");
+        assertEquals("Umoja", test2.getPhrase());
+        assertEquals(-1, test.compareTo(test2));
+        //Null Check
+        test2 = null;
+        //compareTo() will return -99999 if test2 is null
+        assertEquals(-99999, test.compareTo(test2));
+        
+    }
+    
+    /**
+     * testing the equals(Word w) method
+     * Note: Don't need to check for values passed
+     * which are not of type Word due to the generic 
+     * restriction on the parameter type
+     */
+    public void testequals() {
+        assertTrue(test.equals(test2));
+        test.setnumOccur(1);
+        assertFalse(test.equals(test2));
+        test.setnumOccur(10);
+        assertEquals(test.getnumOccur(), test2.getnumOccur());
+        assertEquals(test.getPhrase(), test2.getPhrase());
+        assertEquals(test.getScore(), test2.getScore());
+        assertTrue(test.equals(test2));
+        test2.setScore(1);
+        assertFalse(test.equals(test2));
+        test2.setScore(40);
+        assertTrue(test.equals(test2));
+        test2.setPhrase("Umoja");
+        assertFalse(test.equals(test2));
+        test2.setPhrase("The");
+        assertTrue(test.equals(test2));
+        test2.setPhrase("Song");
+        assertFalse(test.equals(test2));
+                              
+        //Null check
+        test2 = null;
+        assertFalse(test.equals(test2));
+        //Ref check
+        test2 = test;
+        assertTrue(test.equals(test2));
+        
+    }
+    
+    /**
+     * Testing the getScore() method
+     */
+    public void testgetScore() {
+        assertEquals(test.getScore(), test2.getScore());
+        assertEquals(40, test.getScore());
+        assertEquals(40, test2.getScore());
+    }
+    
+    /**
+     * Testing the getPhrase() method
+     */
+    public void testgetPhrase() {
+        assertEquals(test.getPhrase(), test2.getPhrase());
+        assertEquals("The", test.getPhrase());
+        assertEquals("The", test2.getPhrase());
+    }
+    
+    /**
+     * Testing the getnumOccur() method
+     */
+    public void testgetnumOccur() {
+        assertEquals(test.getnumOccur(), test2.getnumOccur());
+        assertEquals(10, test.getnumOccur());
+        assertEquals(10, test2.getnumOccur());
+    }
+    
+    /**
+     * Testing the setScore() method
+     */
+    public void testsetScore() {
+        assertTrue(test.getScore() == test2.getScore());
+        test.setScore(30);
+        assertFalse(test.getScore() == test2.getScore());
+        test.setScore(40);
+        assertTrue(test.getScore() == test2.getScore());
+        test2.setScore(0);
+        assertFalse(test.getScore() == test2.getScore());
+        
+    }
+    
+    
+    /**
+     * Testing the setnumOccur() method
+     */
+    public void testsetnumOccur() {
+        assertEquals(test.getnumOccur(), test2.getnumOccur());
+        test.setnumOccur(2);
+        assertFalse(test.getnumOccur() == test2.getnumOccur());
+        test.setnumOccur(10);
+        assertEquals(test.getnumOccur(), test2.getnumOccur());
+        
+    }
+    
+    /**
+     * Testing the setPhrase() method
+     */
+    public void testsetPhrase() {
+        assertTrue(test.getPhrase().equals(test2.getPhrase()));
+        test.setPhrase("Food");
+        assertFalse(test.getPhrase().equals(test2.getPhrase()));
+        test.setPhrase("The"); 
+        assertTrue(test.getPhrase().equals(test2.getPhrase()));
+    }
+    
+    
+
+}
