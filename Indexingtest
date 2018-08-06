@@ -1,0 +1,184 @@
+import student.TestCase;
+
+/**
+ * This class tests all the methods of the Indexing Class
+ *
+ * @author Thomas Szewczyk
+ * @version 2017.26.11
+ *
+ */
+public class IndexingTest extends TestCase {
+
+   /**
+    * Indexing testing instance
+    */
+   private Indexing test;
+   
+   /**
+    * constructor
+    */
+   public IndexingTest() {
+       //Empty
+   }
+   
+   /**
+    * initializing the binary search tree through Indexing constructor
+    */
+   public void setUp()
+   {
+       test = new Indexing();
+   }
+   
+   /**
+    * test the alreadyContains(String phrase) method
+    * Note: 
+    * The find method of the BinarySearchTree class does not thrown an exception;
+    * it returns null if the element is not found, so there is no need for try-catch
+    */
+   public void testalreadyContains() {
+       assertFalse(test.alreadyContains("the"));
+       test.getTree().insert(new Word("the", 2, 1) );
+       assertTrue(test.alreadyContains("the"));
+       test.getTree().remove(new Word("the", 2, 1));
+       assertFalse(test.alreadyContains("the"));
+       assertFalse(test.alreadyContains("bad"));
+       /**
+        * In the rare case, that a two-worder phrase was inputted into the BST,
+        * then to signify that the main method failed to split the corpus into single words
+        * then alreadyContains(word) should return false because the tree should not have any
+        * two-word phrases
+        */
+       assertFalse(test.alreadyContains("first second"));
+   }
+   
+   /**
+    * test the assignScores(String phrase, int score) method
+    * The insert method of the BinarySearchTree class may throw
+    * an exception if duplicate is attempted to be inserted. However,
+    * the assignScores method will not call insert() unless the tree does
+    * not already contain the word.
+    * Note: assignScores() will never throw an DuplicateItemException
+    * because insert(phrase) is only called when the BST does not already 
+    * contain the phrase; so there is no need for try-catch
+    * There is also no need to test for duplicates because the tree will
+    * not have duplicates, instead if the assignScores(phrase,score) is called
+    * with a phrase which already exists, assignScores() will detect 
+    * that and instead update the score for the existing Word element for that
+    * phrase in the BST.
+    */
+   public void testassignScores() {
+       test.assignScores("the", 2);
+       assertTrue(new Word("the", 2, 1).equals(test.getTree().find(new Word("the", 2, 1))));
+       test.assignScores("the", 2);
+       assertTrue(new Word("the", 4, 2).equals(test.getTree().find(new Word("the", 4, 2))));
+       test.assignScores("movie", 4);
+       assertTrue(new Word("movie", 4, 1).equals(test.getTree().find(new Word("movie", 4, 1))));
+       test.assignScores("bad", 0);
+       test.assignScores("bad", 0);
+       assertTrue(new Word("bad", 0, 2).equals(test.getTree().find(new Word("bad", 0, 2))));
+       
+       //New Data Set, checking each variable of Word objects
+       test = new Indexing();
+       test.assignScores("the", 2);
+       test.assignScores("the", 2);
+       test.assignScores("bad", 0);
+       test.assignScores("bad", 1);
+       test.assignScores("great", 2);
+       test.assignScores("great", 3);
+       assertTrue(new Word("the", 4, 2).equals(test.getTree().find(new Word("the", 4, 2))));
+       Word t = test.getTree().find(new Word("the", 0, 0));
+       assertEquals(2, t.getnumOccur());
+       assertEquals(4, t.getScore());
+       assertEquals("the", t.getPhrase());
+       assertTrue(new Word("bad", 1, 2).equals(test.getTree().find(new Word("bad", 1, 2))));
+       Word t1 = test.getTree().find(new Word("bad", 0, 0));
+       assertEquals(2, t1.getnumOccur());
+       assertEquals(1, t1.getScore());
+       assertEquals("bad", t1.getPhrase());
+       assertTrue(new Word("great", 5, 2).equals(test.getTree().find(new Word("great", 5, 2))));
+       Word t2 = test.getTree().find(new Word("great", 0, 0));
+       assertEquals(2, t2.getnumOccur());
+       assertEquals(5, t2.getScore());
+       assertEquals("great", t2.getPhrase());
+       //This method should never be passed a phrase composed of more than 1 word
+       //So, in the rare case that this method was called on with a phrase 
+       //composed of more than one word, then the method should create a new 
+       //node which represents this two-worded phrase, to signify that the main method
+       //failed to split up the corpus into purely single words
+       test.assignScores("first second", 2);
+       assertNotNull(test.getTree().find(new Word("first second", 2, 1)));
+   }
+   
+   /**
+    * test the getAverageScore(String phrase) method
+    * NOTE: During the Scoring part, getAverageScore() will never be called on a phrase
+    * which is not already in the BST, because getAverageScore() is
+    * only called after alreadycontains() is called before and is true. 
+    * Therefore, it is unnecessary to test getAverageScores() for phrases 
+    * which the user will input which are not in the BST. Thus, using alreadyContains()
+    * before the call to this method will act the function of ignoring values which are
+    * not indexed such as numbers or phrases not seen in the learning text
+    */
+   public void testgetAverageScore(String phrase) {
+       test.assignScores("the", 2);
+       test.assignScores("the", 2);
+       test.assignScores("bad", 0);
+       test.assignScores("bad", 1);
+       test.assignScores("great", 2);
+       test.assignScores("great", 3);
+       //"the" should now have an average score of 2 (4/2=2) 
+       assertTrue(new Word("the", 4, 2).equals(test.getTree().find(new Word("the", 4, 2))));
+       assertEquals(2, test.getAverageScore("the"));
+       
+       //"bad" should now have an average score of .5 (1.0/2.0 =.5) 
+       assertTrue(new Word("bad", 1, 2).equals(test.getTree().find(new Word("bad", 1, 2))));
+       assertEquals(.5, test.getAverageScore("bad"), .001);
+       
+       //"great" should now have an average score of 2 (5.0/2.0=2.5) 
+       assertTrue(new Word("great", 5, 2).equals(test.getTree().find(new Word("great", 5, 2))));
+       assertEquals(2.5, test.getAverageScore("great"), .001);
+       
+       //"the" has total score already of 4
+       test.assignScores("the", 2);
+       test.assignScores("the", 2);
+       //Total Score = 8, Num Occur = 4
+       assertEquals(2, test.getAverageScore("the"));
+       //"bad" has total score already of 1
+       test.assignScores("bad", 0);
+       test.assignScores("bad", 3);
+       //Total Score = 4, Num Occur = 4
+       assertEquals(1, test.getAverageScore("bad"));
+       //"the" has total score already of 5
+       test.assignScores("great", 1);
+       test.assignScores("great", 2);
+       //Total Score = 8, Num Occur = 4
+       assertEquals(2, test.getAverageScore("great"));
+       //If there is duplicate phrase in the user input, then getAverageScore() will be called again and will return the same value as before
+       assertEquals(2, test.getAverageScore("great"));
+       assertEquals(2, test.getAverageScore("great"));
+       
+       /**Test for user input containing more than 1 word, Would most likely never 
+        * happen since the main method breaks apart user input into each word 
+        * and then calls getAverageScore() on each word. If this instance was
+        * to happen then for the sake of testing, the method would return 0, signaling to us that
+        * the main method had failed to break apart all text into two words
+        */
+       assertEquals(0, test.getAverageScore("firstword secondword"));
+   }
+   
+   /**
+    * test the getTree() method
+    */
+   public void testgetTree() {
+       //Tree Instantiated by new Indexing() constructor
+       assertNotNull(test.getTree());
+       //Tree composed of nothing, null 
+       assertNull(test.getTree().findMax());
+       test.assignScores("the", 2);
+       assertTrue(new Word("the", 2, 1).equals(test.getTree().find(new Word("the", 2, 1))));
+       assertNotNull(test.getTree().findMax());
+       test.getTree().getRoot().getElement().equals(new Word("the", 2, 1));
+   }
+   
+
+}
