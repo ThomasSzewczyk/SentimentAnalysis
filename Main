@@ -1,0 +1,105 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.Scanner;
+
+/**
+ * @author Thomas Szewczyk
+ * @version 2017.27.11
+ * This class uses the other classes to perform the process
+ * of sentiment analysis. 
+ */
+public class SentimentAnalysis {
+
+    /**
+     * First Part(Indexing): Reads each line, eliminates punctuation, puts to lower case, and splits into a one-dimensional
+     * String array. For each line the for loop goes through and makes the correct adjustments to the BST by calling
+     * methods on each word in each review. Once while loop ends and all reviews are read, then we finalize all the scores
+     * on all the words in the BST to get an average score for each word in BST
+     * 
+     * Second Part(Scoring): Prompts user to enter their review. User input is split into a array of String elements,
+     * similar as in indexing. A variable totalReviewScore is created which will hold the sum of the average scores of all 
+     * the words which are in the BST and in the user-inputed review. We iterate through the array (composed of the words from the user review)
+     * and for each word, we check to see if it is in the BST and then if it is, we call getAverageScore(word) which will return the average score of that 
+     * word by analyzing its parameters to return the correct average.
+     * The value returned by getAverageScore will be added to the totalReviewScore variable for each iteration(for each word).
+     * We will also increment the variable numWords each time that we reach a word which is in the BST, so that we know how many words
+     * we are supposed to divide the totalReviewScore by since we are ignoring the words which were inputed that are not indexed.  
+     * Once the iteration is finished, we can print out the resulting final average score of the review as totalReviewScore/(numWords)
+     * Lastly, if the final average score is below 2.0, it is noted as negative sentiment, above 2.0 : positive sentiment, equal 2.0 : neutral sentiment
+     * @param args the arguments
+     */
+    public static void main(String[] args) {
+        String filename ="C:\\Users\\szewc\\Documents\\Eclipse Projects\\FinalProject\\src\\moviereviews.txt"; //enter the full path to movieReviews.txt
+        try (BufferedReader br = new BufferedReader(new FileReader(filename)))
+        {
+            //Indexing
+            Indexing i1 = new Indexing();
+            String line;
+            line = br.readLine();
+            while ((line = br.readLine()) != null)
+            {
+              String[] parts = line.replaceAll("\\p{Punct}","").toLowerCase().split("\\s+");//.split("\\s+"); //remove punctuation, change to lowercase and put all words in parts
+              int score = Integer.parseInt(parts[0]);
+              for(int i = 1; i < parts.length; i++)
+              {
+                  String currentWord = parts[i];
+                  //Call method operations, calls assignScores with only single words, not phrases
+                  i1.assignScores(currentWord, score);
+              }
+            }  
+
+            //Scoring
+            System.out.println("Enter a review -- Press enter to exit:");
+            Scanner user = new Scanner(System.in);
+            String review = user.nextLine();
+            String[] parts = review.replaceAll("\\p{Punct}","").toLowerCase().split("\\s+");//.split("\\s+"); 
+            double totalReviewScore = 0;
+            int numWords = 0;
+            for(int j=0; j < parts.length;j++)
+            {
+                String currentWord = parts[j];
+                //If the word is not in BST, total Review incremented by 0, otherwise it is incremented by the score of that word
+                totalReviewScore += i1.getAverageScore(currentWord);
+                if(i1.alreadyContains(currentWord)) 
+                {
+                    /**
+                     * Only increment numWords if the word is already in the BST, effectively ignoring words which are not in the training set 
+                     */
+                    numWords++; 
+                }
+            }
+            if(totalReviewScore == 0) 
+            {
+                System.out.println("Unknown Sentiment");
+            }
+            else 
+            {  
+                /** Prints out the average of the average scores of each word, effectively ignoring the words which the user inputed
+                 *   which weren't in the BST
+                 */    
+                System.out.println("The review has an average value of "+(totalReviewScore/numWords)); 
+            }
+            
+            if(totalReviewScore/numWords > 2)
+            {
+                System.out.println("Positive Sentiment");
+            }
+            else if( totalReviewScore/numWords < 2) 
+            {
+                System.out.println("Negative Sentiment"); 
+            }
+            else if(totalReviewScore == 0)
+            {
+                System.out.println("Unknown Sentiment");
+            }
+            else
+            {
+                System.out.println("Neutral Sentiment");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error" + e);
+        }  
+    }    
+}
