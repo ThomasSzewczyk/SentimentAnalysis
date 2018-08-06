@@ -1,0 +1,124 @@
+
+/**
+ * 
+ * @author Thomas Szewczyk
+ * @version 2017.26.11
+ * Completes both the Indexing and Scoring Tasks of the assignment
+ */
+public class Indexing {
+    
+    /**
+     * The Binary Search Tree used to store all Words
+     * Public access modifier so IndexingTest can access
+     */
+    private BinarySearchTree<Word> tree;
+
+    /**
+     * Constructor for initializing the Binary Search Tree
+     */
+    public Indexing()
+    {
+        tree = new BinarySearchTree<Word>(); 
+    }
+    
+    /**
+     * @return the binary tree of this class
+     * Will be used in other classes and test cases
+     * O(1)
+     */
+    public BinarySearchTree<Word> getTree()
+    {
+        return tree;
+    }
+    
+    //Indexing methods
+    /**
+     * @param word we are testing 
+     * @return boolean whether the tree already contains the word or not
+     * Will utilize the results of the find() method to represent comprehendable results
+     * If the find method (with a parameter of new Word(word,0,0))
+     *  of the BST class returns something other than null, the word
+     * already exists in the Binary Search Tree and the overall method returns true.
+     * The find method will use the Word compareTo method which compares Word
+     * objects only by comparing the word parameter values.
+     * If tree.find(parameter) returns null that means the value doesn't exists 
+     * so the overall method returns false
+     * O(log(n)) -- worst case: find() method is log(n) : depth of tree
+     */
+    public boolean alreadyContains(String word)
+    {
+        if(tree.find(new Word(word, 0 ,0)) != null) 
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * @param word the current word we are examining
+     * @param score the score attributed to this line 
+     * 
+     * Called after word is parsed with the score of the line 
+     * which it is a part of. 
+     * First, check if alreadyContains(word) is false
+     * which means we must insert a new Word into the tree.
+     * In this case, we call tree.insert(new Word(parameters))
+     * with the parameters being the new word,new score, and 1st occurrence
+     * Otherwise, if alreadyContains(word) is true, we update the score and occurrence count by
+     * using tree.find(new Word(parameters)) to first retrieve the existing Word element. 
+     * Once found, we then adjust the attributes of this Word object such
+     * as adding the new score(setting score=oldScore+newScore) and updating occurrences by 1
+     * (setting Num Occur = oldNumOccur + 1)
+     * O(log(n)) -- worst case: insert(), is log(n) : depth of tree
+     */
+    public void assignScores(String word, int score) 
+    {
+        if(!alreadyContains(word)) 
+        {
+            tree.insert(new Word(word, score, 1));
+        }
+        else
+        {
+            Word node = tree.find(new Word(word, 0 , 0));
+            node.setScore(node.getScore() + score);
+            node.setnumOccur(node.getnumOccur() +1);
+        }
+        
+    }
+
+    //Scoring methods
+    /**
+     * @param word the word which we want to retrieve the average value for
+     * @return double which represents the average sentiment score of that word
+     * which is computed by by dividing score (the total score) by numOccur 
+     * (the number of occurrences)
+     * First, we find the Word value by calling tree.find(new Word(word, 0 ,0))
+     * Once the Word element is found then return thatWordElement.getScore()/thatWordElement.getnumOccur()
+     * Will first check to see if the word the user has inputted is in the binary tree, then will find the node
+     * and return the (double)node.getScore()/node.getnumOccur()
+     * O(log(n)) -- worst case: find() goes the height of tree 
+     */
+    public double getAverageScore(String word) 
+    {
+        if(alreadyContains(word))
+        {
+            Word node = tree.find(new Word(word, 0 , 0));
+            return ((double)node.getScore() / node.getnumOccur());
+        }
+        else 
+        /**
+         * If word is composed of more than 1 word, then the method will return 0
+         * in the test cases to signify the rare case that the main method failed to split up 
+           the user input into single words. Also if the word doesn't exist 
+           in the BST, then it will return 0, effectively ignoring these words
+         */ 
+        {
+            return 0;
+        }
+    }
+ 
+}
+
+        
+
+    
